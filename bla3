@@ -1,0 +1,112 @@
+public class Road {
+	float length;
+	int lanes;
+
+	VehicleType[] vehicles;
+
+	public Road (float length, int lanes) {
+		this.length = length;
+		this.lanes = lanes;
+		this.vehicles = new VehicleType[TrafficJamApp.N_SPECS];
+
+		this.vehicles[0] = null;
+		this.vehicles[1] = null;
+		this.vehicles[2] = null;
+	}
+
+	
+	
+	boolean addVehicle (String type) {
+		int vehicleIndex = getVehicleIndex(type);
+		if (vehicleIndex == -1) {
+			return false;
+		}
+
+		if (this.vehicles[vehicleIndex] == null) {
+			this.vehicles[vehicleIndex] = new VehicleType(type);
+		} else {
+			this.vehicles[vehicleIndex].incr();
+		}
+
+		return true;
+	}
+
+	boolean removeVehicle (String type) {
+		int vehicleIndex = getVehicleIndex(type);
+		if (vehicleIndex == -1 || this.vehicles[vehicleIndex] == null) {
+			return false;
+		}
+
+		if (this.vehicles[vehicleIndex].decr() == 0) {
+			this.vehicles[vehicleIndex] = null;
+		}
+
+		return true;
+	}
+
+	private int getVehicleIndex (String type) {
+		if (type.equals(TrafficJamApp.VEHICLE_SPEC_CAR_NAME)) return 0;
+		if (type.equals(TrafficJamApp.VEHICLE_SPEC_MOTORBIKE_NAME)) return 1;
+		if (type.equals(TrafficJamApp.VEHICLE_SPEC_TRUCK_NAME)) return 2;
+		return -1;
+	}
+
+	float getTotalVehicleLength () {
+		float totalLength = 0;
+		for (int i = 0; i < this.vehicles.length; i++) {
+			if (this.vehicles[i] == null) {
+				continue;
+			}
+
+			totalLength += this.vehicles[i].getTotalLength();
+		}
+
+		return totalLength;
+	}
+
+	
+	//getter and setter
+	
+	String getSummary () {
+		return "Road: [LÃ¤nge: " + this.getTotalVehicleLength() + ",\tSpuren: " + lanes + "]";
+	}
+
+
+
+	public float getLength() {
+		return length;
+	}
+
+
+
+	public void setLength(float length) {
+		this.length = length;
+	}
+
+
+
+	public int getLanes() {
+		return lanes;
+	}
+
+
+
+	public void setLanes(int lanes) {
+		this.lanes = lanes;
+	}
+
+
+
+	public VehicleType[] getVehicles() {
+		return vehicles;
+	}
+
+
+
+	public void setVehicles(VehicleType[] vehicles) {
+		this.vehicles = vehicles;
+	}
+	
+	
+	
+}
