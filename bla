@@ -1,0 +1,201 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+/**
+ * Softwareentwicklung 2 Praktikum (SWE2P), SS2020
+ *
+ * @author Dipl. Ing. Clemens Schartmueller, Technische Hochschule Ingolstadt
+ * @version va01_20-Mar-20
+ * @since 20-Mar-20
+ **/
+
+public class TrafficJamApp {
+    /* Please note: The VEHICLE_SPEC_* "constants" are not final, but only for testing purposes. Do not modify these
+     * values - neither at compile nor runtime! */
+
+    public static String
+            VEHICLE_SPEC_CAR_NAME = "Auto",
+            VEHICLE_SPEC_TRUCK_NAME = "LKW",
+            VEHICLE_SPEC_MOTORBIKE_NAME = "Motorrad";
+
+    public static float
+            VEHICLE_SPEC_CAR_LENGTH = 4.5f,
+            VEHICLE_SPEC_TRUCK_LENGTH = 11.5f,
+            VEHICLE_SPEC_MOTORBIKE_LENGTH = 2.0f;
+
+    public static int N_SPECS = 3;
+
+    public static final int
+            MENU_EXIT = 0,
+            MENU_NEW = 1,
+            MENU_ADD = 2,
+            MENU_REMOVE = 3,
+            MENU_ISJAM = 4,
+            MENU_PRINT = 5;
+
+    public static final int
+            VEHICLE_MENU_CAR = 1,
+            VEHICLE_MENU_TRUCK = 2,
+            VEHICLE_MENU_MOTORBIKE = 3;
+
+    private static TrafficJamCalculator currentTrafficJamCalculator;
+
+    private static Scanner inputScanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        do {
+            System.out.println("Staurechner APP\n ===========");
+            printMenu();
+
+            int chosenMenu = readIntFromCLI();
+            switch (chosenMenu) {
+                case MENU_EXIT:
+                    System.out.println("Auf Wiedersehen!");
+                    return; // end application
+
+                case MENU_NEW: // Initialize a new TrafficJamCalculator with a new road, possibly overwriting a
+                    // previously, existing TrafficJamCalculator instance.
+                    newCalcDialog();
+                    break;
+
+                case MENU_ADD:
+                    int type = askVehicleTypeDialog("hinzufÃ¼gen");
+                    doAddOrRemoveAction(type, true);
+                    break;
+
+                case MENU_REMOVE:
+                    type = askVehicleTypeDialog("entfernen");
+                    doAddOrRemoveAction(type, false);
+                    break;
+
+                case MENU_ISJAM:
+                    checkCalcExists();
+                    boolean isJamOnCurrentRoad = currentTrafficJamCalculator.isJam(); // TODO: check if there is a jam, according to the current
+                    // TrafficJamCalculator
+                    System.out.println("Auf der StraÃŸe herrscht derzeit " + (isJamOnCurrentRoad ? "" : "kein ") + "Stau.");
+                    break;
+
+                case MENU_PRINT:
+                    if (currentTrafficJamCalculator == null) {
+                        System.out.println("Noch haben Sie keinen Staurechner angelegt.");
+                    } else {
+                        String trafficJamCalculatorSummary = currentTrafficJamCalculator.getSummary(); // TODO: get the current TrafficJamCalculator's summary.
+                        System.out.println(trafficJamCalculatorSummary);
+                    }
+                    break;
+
+                default:
+                    System.out.println("Unbekannte Aktion!");
+                    break;
+            }
+        } while (true);
+    }
+
+    /**
+     * Performs an add* or remove* - Operation on the current TrafficJamCalculator object
+     *
+     * @param type  specifies the vehicle type to be removed or added, has to be one of the VEHICLE_MENU_* constants
+     * @param isAdd true if an add operation should be performed, false if a remove operation should be performed
+     */
+    private static void doAddOrRemoveAction(int type, boolean isAdd) {
+        switch (type) {
+            case VEHICLE_MENU_CAR:
+            	currentTrafficJamCalculator.addCar(); //TODO: add or remove car from current TrafficJamCalculator object
+                break;
+            case VEHICLE_MENU_TRUCK:
+            	currentTrafficJamCalculator.addTruck(); //TODO: add or remove truck from current TrafficJamCalculator object
+                break;
+            case VEHICLE_MENU_MOTORBIKE:
+            	currentTrafficJamCalculator.addMotorBike(); //TODO: add or remove motorbike from current TrafficJamCalculator object
+                break;
+            default:
+                System.out.println("Unbekannter Fahrzeug-Typ [" + type + "] ???");
+                break;
+        }
+    }
+
+    private static int askVehicleTypeDialog(final String action) {
+        checkCalcExists();
+        int vehicleTypeChosen = 0;
+        boolean vehicleTypeExists = false;
+        // VEHICLE_MENU_*
+        while (!vehicleTypeExists) {
+            System.out.println("Welchen Fahrzeug-Typ mÃ¶chten Sie " + action + " (1: Auto, 2: LKW, 3. Motorrad)?");
+            vehicleTypeChosen = readIntFromCLI();
+            vehicleTypeExists = existQuestion (vehicleTypeChosen); //TODO: check if vehicle type exists according to the constants
+        }
+        return vehicleTypeChosen;
+    }
+
+    /**
+     * Checks if a current TrafficJamCalculator exists. If not, newCalcDialog() is called
+     */
+    private static void checkCalcExists() {
+        if (currentTrafficJamCalculator == null) {
+            System.out.println("Sie haben noch keinen Staurechner angelegt. Bitte machen Sie das noch vorab:");
+            newCalcDialog();
+        }
+    }
+
+    private static void newCalcDialog() {
+        float length = 0.0f;
+        do {
+            System.out.println("GewÃ¼nschte LÃ¤nge der StraÃŸe fÃ¼r die Stau-Berechnung (in Meter, grÃ¶ÃŸer 0): ");
+            length = readFloatFromCLI();
+        } while (length <= 0.0f);
+
+        int lanes = 0;
+        do {
+            System.out.println("GewÃ¼nschte Anzahl Spuren der StraÃŸe fÃ¼r die Stau-Berechnung (groÃŸer 0): ");
+            lanes = readIntFromCLI();
+        } while (lanes <= 0);
+
+        currentTrafficJamCalculator = new TrafficJamCalculator (length, lanes) ; //TODO: initialize new TrafficJamCalculator object with the specified properties length and lanes
+
+    }
+
+    private static void printMenu() {
+        System.out.println("MENÃœ:\n-------\n" + "Neue StraÃŸe anlegen:\t" + MENU_NEW + "\n" +
+                "Neues Fahrzeug " +
+                "hinzufÃ¼gen: \t" + MENU_ADD + "\n" +
+                "Fahrzeug entfernen:\t" + MENU_REMOVE + "\n" + "Auf Stau Ã¼berprÃ¼fen:\t" + MENU_ISJAM + "\n" +
+                "Zusammenfassung ausgeben:\t" + MENU_PRINT + "\n" + "Beenden:\t" + MENU_EXIT + "\n");
+
+    }
+
+
+    /**
+     * Tries to read an integer number from the command line (System.in) until it succeeds to do so.
+     *
+     * @return the read and parsed number
+     */
+    private static int readIntFromCLI() {
+        while (true) {
+            try {
+                return inputScanner.nextInt();
+            } catch (InputMismatchException exception) { }
+        }
+    }
+
+    /**
+     * Tries to read an integer number from the command line (System.in) until it succeeds to do so.
+     *
+     * @return the read and parsed number
+     */
+    private static float readFloatFromCLI() {
+        while (true) {
+            try {
+                return inputScanner.nextFloat();
+            } catch (InputMismatchException exception) { }
+        }
+    }
+    
+    private static boolean existQuestion (int type) {
+		
+		if (type == 1) return true;
+		if (type == 2) return true;
+		if (type == 3) return true;
+
+			return false;
+			}
+}
