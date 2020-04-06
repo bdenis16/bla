@@ -1,0 +1,65 @@
+public class VehicleType {
+	long vehicleCount = 0;
+	String vehicleSpecName;
+	float singleLength, totalLength;
+
+	public VehicleType (String vehicleSpecName) {
+		this.vehicleSpecName = vehicleSpecName;
+	}
+
+	public long incr () {
+		return ++vehicleCount;
+	}
+
+	public long decr () {
+		return --vehicleCount;
+	}
+
+	public float getSingleLength() {
+		if (vehicleSpecName.equals(TrafficJamApp.VEHICLE_SPEC_CAR_NAME)) {
+			return TrafficJamApp.VEHICLE_SPEC_CAR_LENGTH;
+		}
+
+		if (vehicleSpecName.equals(TrafficJamApp.VEHICLE_SPEC_TRUCK_NAME)) {
+			return TrafficJamApp.VEHICLE_SPEC_TRUCK_LENGTH;
+		}
+
+		if (vehicleSpecName.equals(TrafficJamApp.VEHICLE_SPEC_MOTORBIKE_NAME)) {
+			return TrafficJamApp.VEHICLE_SPEC_MOTORBIKE_LENGTH;
+		}
+
+		return 0;
+	}
+
+
+	public float getTotalLength () {
+		return (float) vehicleCount * this.getSingleLength();
+	}
+
+	public String getSummary() {
+		String summary = "Fahrzeuge:\n";
+		
+		for (int i = 0; i < TrafficJamApp.N_SPECS; i++) {
+			summary += "\t VehicleType {Typ: " + vehicleSpecName + "\t Anzahl: " + vehicleCount + "\t Gesamtlaenge: " + getTotalLength();
+		}
+		return summary;
+	}
+
+	// Getter and setter ######################
+
+	public long getVehicleCount() {
+		return vehicleCount;
+	}
+
+	public void setVehicleCount(long vehicleCount) {
+		this.vehicleCount = vehicleCount;
+	}
+
+	public String getVehicleSpecName() {
+		return vehicleSpecName;
+	}
+
+	public void setVehicleSpecName(String vehicleSpecName) {
+		this.vehicleSpecName = vehicleSpecName;
+	}
+}
