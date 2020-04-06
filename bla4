@@ -1,0 +1,80 @@
+
+
+public class TrafficJamCalculator {
+	
+	 VehicleType currentVehicleType;
+     Road road;
+
+    public TrafficJamCalculator (float length, int lanes) {
+        road = new Road(length, lanes);
+
+        
+        
+    }
+
+    boolean isJam () {
+        return this.road.getTotalVehicleLength() / (this.road.length / this.road.lanes) > .9;
+    }
+
+    String getSummary () {
+    	
+    	return "Stau? " + (isJam() ? "ja" : "nein") + "\n"
+    			  + road.getSummary() + "\n"
+    			  + currentVehicleType.getSummary();
+    	
+    	/*if(isJam() == true) {   
+    		
+    		String TrafficJamCalculator = "TrafficJamCalculator: [Stau? ja]";
+    		String roadString = road.getSummary();
+    		String VehicleType = currentVehicleType.getSummary();
+    		String finalString = TrafficJamCalculator + "\n" + roadString + "\n" + VehicleType;
+    		return finalString;
+    	}
+		
+		String TrafficJamCalculator = "TrafficJamCalculator: [Stau? n]";
+		String roadString = road.getSummary();
+		String VehicleType = currentVehicleType.getSummary();
+		String finalString = TrafficJamCalculator + "\n" + roadString + "\n" + VehicleType;
+		return finalString;*/
+    }
+
+    public void addTruck () {
+        this.road.addVehicle(TrafficJamApp.VEHICLE_SPEC_TRUCK_NAME);
+    }
+
+    public void removeTruck () {
+        this.road.removeVehicle(TrafficJamApp.VEHICLE_SPEC_TRUCK_NAME);
+    }
+
+    
+    
+    
+    
+    
+    //getter and setter
+    
+
+	public Road getRoad() {
+		return road;
+	}
+
+	public void setRoad(Road road) {
+		this.road = road;
+	}
+
+	public void addCar () {
+        this.road.addVehicle(TrafficJamApp.VEHICLE_SPEC_CAR_NAME);
+    }
+
+    public void removeCar () {
+        this.road.removeVehicle(TrafficJamApp.VEHICLE_SPEC_CAR_NAME);
+    }
+
+    public void addMotorBike () {
+        this.road.addVehicle(TrafficJamApp.VEHICLE_SPEC_MOTORBIKE_NAME);
+    }
+
+    public void removeMotorBike () {
+        this.road.removeVehicle(TrafficJamApp.VEHICLE_SPEC_MOTORBIKE_NAME);
+    }
+}
